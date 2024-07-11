@@ -1,41 +1,35 @@
 import { useEffect, useState } from "react";
 
+
 function App() {
   const [loading, setLoading] = useState(true);
-  const [coins, setCoins] = useState([]);
-  const [myMoney, setMyMoney] = useState(0);
-  const [getCoin, setGetCoin] = useState(0);
-  const writeMoney = (e) => setMyMoney(e.target.value);
-  const selectCoin = (e) => setGetCoin(e.target.value);
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    const json = await (
+      await fetch(
+        'https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year'
+      )
+    ).json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  }
   useEffect(() => {
-    fetch("https://api.coinpaprika.com/v1/tickers")
-      .then(response => response.json())
-      .then((json) => {
-        setCoins(json);
-        setLoading(false);
-      });
+    getMovies()
   }, [])
-  return (
-    <div>
-      <h1>The Coins!({coins.length})</h1>
-      <div>
-        <input type="number" value={myMoney} onChange={writeMoney} placeholder="WRITE UR USD"></input>
-      </div>
-
-      {loading ? <strong>Loading...</strong> : null}
-
-      <select onChange={selectCoin}>
-        {coins.map((coin) =>
-          <option key={coin.id} value={coin.quotes.USD.price}>
-            {coin.name}
-            ({coin.symbol}): {(coin.quotes.USD.price).toFixed(2)})USD
-          </option>)}
-      </select>
-
-      <p>Coins you can buy: {getCoin > 0 ? (myMoney / getCoin).toFixed(2) : null}</p>
-    </div>
-
-  );
+  console.log(movies)
+  return <div>
+    {loading ? <h1>Loading...</h1> : <div>
+      {movies.map((movie) => (<div key={movie.id}>
+        <img src={movie.medium_cover_image} alt="coverImage" />
+        <p>{movie.summary}</p>
+        <ul>
+          {movie.genres.map((g) =>
+            <li key={g}>{g}</li>)
+          }
+        </ul>
+      </div>))}
+    </div>}
+  </div>;
 }
 
 export default App;
