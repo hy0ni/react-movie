@@ -1,0 +1,14 @@
+.container {
+  padding: 5vw;
+  height: 100vh;
+  background: #000;
+}
+
+.flex {
+  display: flex;
+}
+
+.article {
+  padding: 2vw;
+  color: #fff
+}
